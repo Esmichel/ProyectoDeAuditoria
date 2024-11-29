@@ -1,0 +1,64 @@
+# Imagen base de Ubuntu
+FROM ubuntu:20.04
+
+# Evitar prompts interactivos durante la instalación
+ENV DEBIAN_FRONTEND=noninteractive
+
+
+
+# Configurar zona horaria automáticamente
+RUN ln -fs /usr/share/zoneinfo/Europe/Madrid /etc/localtime && \
+    echo "Europe/Madrid" > /etc/timezone && \
+    dpkg-reconfigure -f noninteractive tzdata
+
+# Actualizar paquetes e instalar dependencias necesarias
+RUN apt update && apt install -y \
+    apache2 \
+    php \
+    libapache2-mod-php \
+    mysql-server \
+    php-mysql \
+    vsftpd \
+    nano \
+    cron \
+    wget \
+    git \
+    mvn \
+    openjdk-17-jre-headless && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN git clone https://github.com/Esmichel/ProyectoDeAuditoria.git
+
+RUN mvn clean install 
+
+# Crear usuarios y configurar permisos
+RUN useradd -m user1 && echo "user1:password1" | chpasswd && \
+    useradd -m user2 && echo "user2:password2" | chpasswd && \
+    groupadd admin_group && usermod -aG admin_group user2 && \
+    echo 'user2 ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# Crear directorios y configurar flags
+RUN mkdir /flags && chmod 700 /flags && \
+    mkdir -p /var/ftp && chmod 777 /var/ftp
+
+# Copiar archivos necesarios (app, flags, configuración)
+COPY /path/to/your/springboot-app.jar /var/www/html/app.jar
+COPY flags/flag.txt /flags/flag.txt
+COPY ./vsftpd.conf /etc/vsftpd.conf
+RUN chmod 400 /flags/flag.txt
+
+# Configuración de cronjobs
+RUN echo "*/1 * * * * root /bin/echo 'Este es un cron job de ejemplo'" > /etc/cron.d/example-cron && \
+    echo "* * * * * root /usr/bin/id > /tmp/cron_output.txt" > /etc/cron.d/cron_vuln && \
+    chmod 0644 /etc/cron.d/example-cron /etc/cron.d/cron_vuln
+
+# Configuración de un script SUID como ejemplo de vulnerabilidad
+RUN echo -e "#!/bin/bash\nchmod 4755 /bin/bash" > /root/set_suid.sh && chmod +x /root/set_suid.sh
+
+# Exponer puertos requeridos
+EXPOSE 8080
+
+# Comando de entrada para iniciar servicios
+CMD service apache2 start && service vsftpd start && service cron start && java -jar /var/www/html/app.jar
