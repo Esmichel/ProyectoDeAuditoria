@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  springboot-app:
+    build: .
+    container_name: dockerFile
+    ports:
+      - "8080:8080" # Puerto para la aplicación Spring Boot
+      - "21:21" # Puerto FTP (si es necesario)
+      - "20:20" # Puerto de datos FTP (si es necesario)
+      - "80:80" # Puerto para Apache (si es necesario)
+    environment:
+      - JAVA_OPTS="-Xms512m -Xmx1024m" # Opcional: Configuración de memoria para la JVM de Spring Boot
+    networks:
+      - app-network
+
+    # Configurar dependencias y reiniciar el contenedor si se detiene inesperadamente
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge

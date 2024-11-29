@@ -1,18 +1,27 @@
-# Imagen base de Ubuntu
-FROM ubuntu:20.04
+# Etapa de construcción: Usar Maven y OpenJDK
+FROM maven:3.8.6-openjdk-17-slim AS builder
 
-# Evitar prompts interactivos durante la instalación
-ENV DEBIAN_FRONTEND=noninteractive
+# Instalar Git y OpenSSH
+RUN apt-get update && apt-get install -y \
+    git \
+    openssh-client \
+    && apt-get clean
 
+WORKDIR /app
 
+# Clonar el repositorio público de GitHub
+RUN git clone https://github.com/Esmichel/ProyectoDeAuditoria.git
 
-# Configurar zona horaria automáticamente
-RUN ln -fs /usr/share/zoneinfo/Europe/Madrid /etc/localtime && \
-    echo "Europe/Madrid" > /etc/timezone && \
-    dpkg-reconfigure -f noninteractive tzdata
+WORKDIR /app/ProyectoDeAuditoria
 
-# Actualizar paquetes e instalar dependencias necesarias
-RUN apt update && apt install -y \
+# Ejecutar Maven para compilar y empaquetar la aplicación (Genera el archivo .jar)
+RUN mvn clean install -DskipTests
+
+# Etapa de ejecución: Usar una imagen ligera con OpenJDK
+FROM openjdk:17-jdk-slim
+
+# Instalar dependencias necesarias (apache, php, etc.)
+RUN apt-get update && apt-get install -y \
     apache2 \
     php \
     libapache2-mod-php \
@@ -22,16 +31,12 @@ RUN apt update && apt install -y \
     nano \
     cron \
     wget \
-    git \
-    mvn \
-    openjdk-17-jre-headless && \
-    apt clean && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-RUN git clone https://github.com/Esmichel/ProyectoDeAuditoria.git
-
-RUN mvn clean install 
+# Copiar el archivo .jar generado en la etapa de construcción
+COPY --from=builder /app/ProyectoDeAuditoria/target/ProyectoDeAuditoria.jar /app/app.jar
 
 # Crear usuarios y configurar permisos
 RUN useradd -m user1 && echo "user1:password1" | chpasswd && \
@@ -39,12 +44,11 @@ RUN useradd -m user1 && echo "user1:password1" | chpasswd && \
     groupadd admin_group && usermod -aG admin_group user2 && \
     echo 'user2 ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-# Crear directorios y configurar flags
+# Crear directorios y configurar permisos
 RUN mkdir /flags && chmod 700 /flags && \
     mkdir -p /var/ftp && chmod 777 /var/ftp
 
 # Copiar archivos necesarios (app, flags, configuración)
-COPY /path/to/your/springboot-app.jar /var/www/html/app.jar
 COPY flags/flag.txt /flags/flag.txt
 COPY ./vsftpd.conf /etc/vsftpd.conf
 RUN chmod 400 /flags/flag.txt
@@ -61,4 +65,4 @@ RUN echo -e "#!/bin/bash\nchmod 4755 /bin/bash" > /root/set_suid.sh && chmod +x 
 EXPOSE 8080
 
 # Comando de entrada para iniciar servicios
-CMD service apache2 start && service vsftpd start && service cron start && java -jar /var/www/html/app.jar
+CMD service apache2 start && service vsftpd start && service cron start && java -jar /app/app.jar
