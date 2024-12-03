@@ -1,5 +1,6 @@
 package com.auditoria.proyecto_ctf.api.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,12 +26,16 @@ import com.auditoria.proyecto_ctf.application.authentication.JwtAuthenticationFi
 @Configuration
 @EnableMethodSecurity
 public class SpringSecurityConfig {
-
+    
     private UserDetailsService userDetailsService;
 
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
 
     private JwtAuthenticationFilter authenticationFilter;
+
+    public SpringSecurityConfig(JwtAuthenticationFilter authenticationFilter) {
+        this.authenticationFilter = authenticationFilter;
+    }
 
     @Bean
     public static PasswordEncoder passwordEncoder(){

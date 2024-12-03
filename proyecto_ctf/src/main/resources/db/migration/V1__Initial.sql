@@ -4,7 +4,7 @@ CREATE SCHEMA IF NOT EXISTS common;
 
 -- Create users table
 CREATE TABLE users.users (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255),
@@ -15,29 +15,29 @@ CREATE TABLE users.users (
 
 -- Create roles table
 CREATE TABLE users.roles (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
     description VARCHAR(255)
 );
 
 -- Create permissions table
 CREATE TABLE users.permissions (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
     description VARCHAR(255)
 );
 
 -- Create user_roles table (many-to-many relationship between users and roles)
 CREATE TABLE users.user_roles (
-    user_id INT REFERENCES users.users(id) ON DELETE CASCADE,  -- Fixed the reference to users table
-    role_id INT REFERENCES users.roles(id) ON DELETE CASCADE,  -- Fixed the reference to roles table
+    user_id BIGINT REFERENCES users.users(id) ON DELETE CASCADE,  -- Fixed the reference to users table
+    role_id BIGINT REFERENCES users.roles(id) ON DELETE CASCADE,  -- Fixed the reference to roles table
     PRIMARY KEY (user_id, role_id)
 );
 
 -- Create role_permissions table (many-to-many relationship between roles and permissions)
 CREATE TABLE users.role_permissions (
-    role_id INT REFERENCES users.roles(id) ON DELETE CASCADE,  -- Fixed the reference to roles table
-    permission_id INT REFERENCES users.permissions(id) ON DELETE CASCADE,  -- Fixed the reference to permissions table
+    role_id BIGINT REFERENCES users.roles(id) ON DELETE CASCADE,  -- Fixed the reference to roles table
+    permission_id BIGINT REFERENCES users.permissions(id) ON DELETE CASCADE,  -- Fixed the reference to permissions table
     PRIMARY KEY (role_id, permission_id)
 );
 

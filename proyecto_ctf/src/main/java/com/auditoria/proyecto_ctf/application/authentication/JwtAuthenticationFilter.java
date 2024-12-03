@@ -37,6 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Get JWT token from HTTP request
         String token = getTokenFromRequest(request);
 
+        if (request.getRequestURI().startsWith("/api/auth")) {
+            filterChain.doFilter(request, response); // Just pass the request to the next filter
+            return;
+        }
+
         // Validate Token
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
             // get username from token

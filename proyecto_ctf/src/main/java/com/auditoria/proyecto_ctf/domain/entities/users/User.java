@@ -39,10 +39,10 @@ public class User {
     @Column(name = "active", nullable = false)
     private Boolean active;
 
-    @Column(name = "created at", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private Timestamp createrdAt;
 
-    @Column(name = "updated at", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt;
 
     public User(String username, String password, String email, Boolean active, Timestamp createrdAt,
