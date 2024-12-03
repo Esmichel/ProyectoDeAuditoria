@@ -1,4 +1,4 @@
-package com.auditoria.proyecto_ctf;
+package com.auditoria.proyecto_ctf.api.controllers;
 
 import org.springframework.web.bind.annotation.*;
 import java.io.*;
