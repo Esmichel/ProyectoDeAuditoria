@@ -1,14 +1,12 @@
-version: '3.8'
-
 services:
   # Servicio para la aplicación Spring Boot
   springboot-app:
     build: .
     container_name: springboot-app
     ports:
-      - "8080:8080" # Puerto para la aplicación
-      - "80:80"     # Puerto para Apache
-      - "21:21"     # Puerto para FTP
+      - "8080:8080"  # Puerto para la aplicación
+      - "80:80"      # Puerto para Apache
+      - "21:21"      # Puerto para FTP
     networks:
       - app-network
     environment:
@@ -19,24 +17,24 @@ services:
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=userpassword
     volumes:
-      - ./flags:/flags # Montar la carpeta de flags
+      - ./flags:/flags  # Montar la carpeta de flags
     restart: unless-stopped
     depends_on:
-      - mysql-db # Asegura que MySQL esté listo antes de iniciar la app
+      - mysql-db  # Asegura que MySQL esté listo antes de iniciar la app
 
   # Servicio para la base de datos MySQL
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
     ports:
-      - "3306:3306" # Puerto para acceso a la base de datos
+      - "3306:3306"  # Puerto para acceso a la base de datos
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: proyecto_auditoria
       MYSQL_USER: user
       MYSQL_PASSWORD: userpassword
     volumes:
-      - db_data:/var/lib/mysql # Persistencia de datos
+      - db_data:/var/lib/mysql  # Persistencia de datos
     networks:
       - app-network
     restart: unless-stopped
@@ -46,10 +44,10 @@ services:
     image: fauria/vsftpd
     container_name: ftp-server
     ports:
-      - "20:20" # Puerto de datos FTP
-      - "21:21" # Puerto FTP principal
+      - "20:20"  # Puerto de datos FTP
+      - "21:21"  # Puerto FTP principal
     volumes:
-      - ./ftp:/home/vsftpd # Carpeta para FTP
+      - ./ftp:/home/vsftpd  # Carpeta para FTP
     environment:
       # Configuración básica para el servidor FTP
       - FTP_USER=user1
@@ -59,8 +57,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  db_data: # Volumen persistente para MySQL
-  ftp_data: # Volumen persistente para FTP (si es necesario)
+  db_data: {}  # Volumen persistente para MySQL
 
 networks:
   app-network:
