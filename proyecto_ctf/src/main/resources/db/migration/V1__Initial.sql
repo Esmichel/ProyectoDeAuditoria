@@ -56,7 +56,7 @@ INSERT INTO users.permissions (name, description) VALUES
 
 -- Create a user (assuming a user with ID 1)
 INSERT INTO users.users (username, password, email, active) 
-VALUES ('admin_user', 'password_hash', 'admin@example.com', TRUE);
+VALUES ('admin_user', '5f4dcc3b5aa765d61d8327deb882cf99', 'admin@example.com', TRUE);
 
 -- Assign roles to the created user (user_id = 1)
 INSERT INTO users.user_roles (user_id, role_id) VALUES
