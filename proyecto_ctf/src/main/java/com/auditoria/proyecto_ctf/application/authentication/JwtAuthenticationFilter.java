@@ -34,13 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        // Get JWT token from HTTP request
-        String token = getTokenFromRequest(request);
-
-        if (request.getRequestURI().startsWith("/api/auth")) {
+        if (request.getRequestURI().startsWith("/login")) {
             filterChain.doFilter(request, response); // Just pass the request to the next filter
             return;
         }
+
+        // Get JWT token from HTTP request
+        String token = getTokenFromRequest(request);
 
         // Validate Token
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
