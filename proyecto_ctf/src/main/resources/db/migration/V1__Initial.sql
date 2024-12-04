@@ -67,4 +67,4 @@ INSERT INTO users.user_roles (user_id, role_id) VALUES
 INSERT INTO users.role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM users.roles r
-JOIN users.permissions p ON r.name = 'Admin';
+JOIN users.permissions p ON r.name = 'Admin'; 
