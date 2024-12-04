@@ -23,6 +23,10 @@ import jakarta.persistence.Table;
 @Table(name = "users", schema = "users")
 public class User {
 
+    public User() {
+        // Constructor sin argumentos requerido por Hibernate
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
