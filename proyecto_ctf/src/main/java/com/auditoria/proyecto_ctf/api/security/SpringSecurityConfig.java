@@ -1,15 +1,18 @@
 package com.auditoria.proyecto_ctf.api.security;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -23,38 +26,37 @@ import com.auditoria.proyecto_ctf.application.authentication.JwtAuthenticationFi
 @EnableMethodSecurity
 public class SpringSecurityConfig {
 
+    private UserDetailsService userDetailsService;
+
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
     private JwtAuthenticationFilter authenticationFilter;
 
-    public SpringSecurityConfig(JwtAuthenticationFilter authenticationFilter) {
-        this.authenticationFilter = authenticationFilter;
-    }
-
     @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return new MessageDigestPasswordEncoder("MD5"); // Not recommended, use a better encoder in production
+    public static PasswordEncoder passwordEncoder(){
+        return new MessageDigestPasswordEncoder("MD5"); // Sabemos que esta deprecado pero necesitamos que se inseguro 
     }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity, can be adjusted if necessary
-            .authorizeHttpRequests((authorize) -> {
-                // Public authentication endpoints
-                authorize.requestMatchers("/api/auth/**").permitAll();
-                // Allow OPTIONS requests to any endpoint
-                authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-                // Allow unauthenticated access to the login page
-                authorize.requestMatchers("/login").permitAll();
-                // All other requests require authentication
-                authorize.anyRequest().authenticated();
-            })
-            .formLogin(form -> form
-                .loginPage("/login")  // Specify the custom login page URL
-                .permitAll()  // Allow unauthenticated access to the login page
-            )
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(authenticationEntryPoint))  // Custom authentication entry point
-            .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);  // Custom JWT filter
+
+        http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests((authorize) -> {
+//                    authorize.requestMatchers(HttpMethod.POST, "/api/**").hasRole("ADMIN");
+//                    authorize.requestMatchers(HttpMethod.PUT, "/api/**").hasRole("ADMIN");
+//                    authorize.requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN");
+//                    authorize.requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN", "USER");
+//                    authorize.requestMatchers(HttpMethod.PATCH, "/api/**").hasAnyRole("ADMIN", "USER");
+//                    authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll();
+                    authorize.requestMatchers("/api/auth/**").permitAll();
+                    authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                    authorize.anyRequest().authenticated();
+                }).httpBasic(Customizer.withDefaults());
+
+        http.exceptionHandling( exception -> exception
+                .authenticationEntryPoint(authenticationEntryPoint));
+
+        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -63,19 +65,6 @@ public class SpringSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-
-
-    // You may want to implement a custom UserDetailsService if you're not using in-memory authentication
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails user = User.builder()
-//                .username("user")
-//                .password(passwordEncoder().encode("password"))
-//                .roles("USER")
-//                .build();
-//        return new InMemoryUserDetailsManager(user);
-//    }
-
 
 //    @Bean
 //    public UserDetailsService userDetailsService(){

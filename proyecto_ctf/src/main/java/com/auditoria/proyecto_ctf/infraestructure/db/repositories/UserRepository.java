@@ -10,6 +10,7 @@ import com.auditoria.proyecto_ctf.domain.entities.users.User;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long>{
 
+    public User findfindById(Long id);
     public Optional<User> findByUsername(String username);
 
 }
