@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <!-- Link to the external JS file -->
+    <script src="login.js"></script>
 </head>
 <body>
     <h2>Please Sign In</h2>
 
-    <form th:action="@{/login}" method="post">
+    <form id="loginForm" method="post">
         <div>
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
@@ -20,8 +22,8 @@
             <button type="submit">Login</button>
         </div>
 
-        <div th:if="${param.error}">
-            <p style="color:red;">Invalid username or password.</p>
+        <div id="error-message" style="color:red; display:none;">
+            <p>Invalid username or password.</p>
         </div>
     </form>
 

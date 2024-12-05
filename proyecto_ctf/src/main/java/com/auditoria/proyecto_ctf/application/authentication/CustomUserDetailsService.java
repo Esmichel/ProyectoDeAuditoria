@@ -1,6 +1,5 @@
 package com.auditoria.proyecto_ctf.application.authentication;
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,22 +16,26 @@ import java.util.stream.Collectors;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private UserRepository userRepository;
+        private UserRepository userRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        public CustomUserDetailsService(UserRepository userRepository) {
+                this.userRepository = userRepository;
+        }
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not exists by Username or Email"));
+        @Override
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Set<GrantedAuthority> authorities = user.getRoles().stream()
-                .map((role) -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
+                User user = userRepository.findByUsername(username)
+                                .orElseThrow(() -> new UsernameNotFoundException(
+                                                "User not exists by Username or Email"));
 
-        return new org.springframework.security.core.userdetails.User(
-                username,
-                user.getPassword(),
-                authorities
-        );
-    }
+                Set<GrantedAuthority> authorities = user.getRoles().stream()
+                                .map((role) -> new SimpleGrantedAuthority(role.getName()))
+                                .collect(Collectors.toSet());
+
+                return new org.springframework.security.core.userdetails.User(
+                                username,
+                                user.getPassword(),
+                                authorities);
+        }
 }

@@ -34,6 +34,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
+        if (request.getRequestURI().startsWith("/login") || request.getRequestURI().startsWith("/api/auth/loginform")) {
+            filterChain.doFilter(request, response); // Just pass the request to the next filter
+            return;
+        }
+
         // Get JWT token from HTTP request
         String token = getTokenFromRequest(request);
 
