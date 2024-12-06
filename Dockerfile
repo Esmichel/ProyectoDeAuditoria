@@ -38,6 +38,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 RUN echo "listen_addresses='*'" >> /etc/postgresql/13/main/postgresql.conf
+# permitir conexiones desde cualquier ip 
+RUN echo "host    proyecto_auditoria    user_auditoria    0.0.0.0/0    md5" >> /etc/postgresql/13/main/pg_hba.conf 
+
+
 
 # Initialize PostgreSQL
 USER postgres
@@ -55,9 +59,8 @@ WORKDIR /app
 
 # Copy the built .jar file from the builder stage to the runtime stage
 COPY --from=builder /app/ProyectoDeAuditoria/proyecto_ctf/target/proyecto_ctf-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=builder /app/ProyectoDeAuditoria/proyecto_ctf/start-services.sh /app/start-services.sh
 
-# Copy the service start script
-COPY start-services.sh /app/start-services.sh
 
 # Make the JAR file and the script executable
 RUN chmod +x /app/app.jar /app/start-services.sh
@@ -67,3 +70,7 @@ EXPOSE 8080 5432 21 80
 
 # Run the script to start services and the application
 CMD ["/app/start-services.sh"]
+
+
+# para cuando se hacen cambios en el dockerfile y hay que volver a compilar limpio 
+# docker build --no-cache -t your-image-name .
