@@ -41,7 +41,21 @@ RUN echo "listen_addresses='*'" >> /etc/postgresql/13/main/postgresql.conf
 # permitir conexiones desde cualquier ip 
 RUN echo "host    proyecto_auditoria    user_auditoria    0.0.0.0/0    md5" >> /etc/postgresql/13/main/pg_hba.conf 
 
-
+# Configurar vsftpd para acceso anónimo
+RUN echo "anonymous_enable=YES" >> /etc/vsftpd.conf && \
+    echo "local_enable=NO" >> /etc/vsftpd.conf && \
+    echo "write_enable=NO" >> /etc/vsftpd.conf && \
+    echo "anon_root=/home/vsftpd/anon" >> /etc/vsftpd.conf && \
+    echo "xferlog_enable=YES" >> /etc/vsftpd.conf && \
+    echo "xferlog_file=/var/log/vsftpd.log" >> /etc/vsftpd.conf && \
+    echo "pasv_enable=YES" >> /etc/vsftpd.conf && \
+    echo "pasv_min_port=10000" >> /etc/vsftpd.conf && \
+    echo "pasv_max_port=10100" >> /etc/vsftpd.conf && \
+    mkdir -p /home/vsftpd/anon && \
+    echo "Archivo de prueba" > /home/vsftpd/anon/test.txt && \
+    chmod -R 755 /home/vsftpd/anon && \
+    chmod 644 /home/vsftpd/anon/test.txt && \
+    chown -R ftp:ftp /home/vsftpd/anon
 
 # Initialize PostgreSQL
 USER postgres

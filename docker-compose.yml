@@ -8,6 +8,8 @@ services:
       - "80:80" # Puerto para Apache
       - "21:21" # Puerto para FTP
       - "5432:5432" #Puerto para PostgreSQL
+      - "10000-10100:10000-10100"
+
     networks:
       - app-network
     environment:
