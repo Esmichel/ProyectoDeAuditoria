@@ -7,7 +7,7 @@ service postgresql start
 #service apache2 start
 
 # Start FTP service
-#service vsftpd start
+service vsftpd start
 
 # Run the Spring Boot application
 java -jar /app/app.jar
