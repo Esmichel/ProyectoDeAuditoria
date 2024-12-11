@@ -22,4 +22,9 @@ public class LoginController {
         }
         return "login";
     }
+
+    @RequestMapping("/dashboard")
+    public String dashboard(HttpServletRequest request) {
+        return "dashboard";
+    }
 }

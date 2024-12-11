@@ -1,0 +1,58 @@
+<!--Header with title and user info-->
+<header onclick="_paq.push(['trackEvent', 'Click', 'ClickHeader', 'click on heades']);" th:fragment="header-title-user">
+    <div class="d-flex bgreen1 align-items-center justify-content-between text-dark ">
+      <div>
+        <!--is necessary to have the title in the middle always-->
+      </div>
+      <h1 layout:fragment="title" class="mt-1 display-1 mb-1"></h1>
+      <div onclick="_paq.push(['trackEvent', 'Open', 'OpenMenuDropdown', 'open the menu dropdown']);" class="col-1 p-5" th:insert="~{fragments/header :: profile-dropdown}"></div>
+    </div>
+  </header>
+  
+  <!--Header with name and logo-->
+  <header onclick="_paq.push(['trackEvent', 'Click', 'ClickHeader', 'click on heades']);" th:fragment="header-login">
+    <div class="d-flex py-4 bgreen1 align-items-center justify-content-center text-dark text-decoration-none">
+      <h1 classs="fs-1">GRÜNER HÜGEL</h1>
+      <img onclick="_paq.push(['trackEvent', 'Click', 'ClickLogo', 'click on GrunerHugelLogo']);" id="logo" th:src="@{/img/icono.png}" alt="Grüner Hügel Logo">
+    </div>
+  </header>
+  
+  <!--Profile-->
+  <div onclick="_paq.push(['trackEvent', 'Click', 'ClickProfile', 'click on profile']);" class="dropdown" th:fragment="profile-dropdown">
+    <div sec:authorize="isAuthenticated()" href="#" class="dropdown-toggle" data-bs-toggle="dropdown"
+      aria-expanded="false">
+      <img onclick="_paq.push(['trackEvent', 'Click', 'ClickProfileImg', 'click on profile image']);" class="bgreen3 w-100 rounded-circle" th:src="@{/img/perfil.png}" alt="perfil" />
+    </div>
+    <ul class="mt-4 pt-0 bgreen1 dropdown-menu">
+      <li onclick="_paq.push(['trackEvent', 'Click', 'ClickCompleteProfile', 'click on complete profile']);" class="mb-3 bgreen3 mt-n5 d-flex align-items-center justify-content-center">
+        <img class="w-25" th:src="@{/img/perfil.png}" alt="perfil">
+        <h2 sec:authorize="isAuthenticated()" th:text="${#authentication.getPrincipal().getUsername()}"></h2>
+      </li>
+      <div sec:authorize="hasAuthority('ADMIN')">
+        <li class="mb-3 d-flex justify-content-center">
+          <a onclick="_paq.push(['trackEvent', 'Redirect', 'RedirectUserList', 'go to user list']);" class="btn w-75 bgreen2" th:href="@{/admin}" th:text="#{menu.users}"></a>
+        </li>
+        <li class="mb-3 d-flex justify-content-center">
+          <a onclick="_paq.push(['trackEvent', 'Redirect', 'RedirectStats', 'go to stats list']);" class="btn w-75 bgreen2" th:href="@{/investor}" th:text="#{menu.stats}"></a>
+        </li>
+        <li class="mb-3 d-flex justify-content-center">
+          <a onclick="_paq.push(['trackEvent', 'Redirect', 'RedirectSimulation', 'go to user simulation']);" class="btn w-75 bgreen2" th:href="@{/main}" th:text="#{menu.simulation}"></a>
+        </li>
+        <li class="mb-3">
+          <hr class="dropdown-divider">
+        </li>
+      </div>
+      <span class="mb-3 d-flex justify-content-center" th:text="#{lang.change}"></span>
+      <div class="d-flex justify-content-around">
+        <a onclick="_paq.push(['trackEvent', 'Change', 'CangeToEuskera', 'change lenguage to euskera']);" class="btn bgreen2 mx-2" th:href="@{?lang=eu}" th:text="#{lang.eu}"></a>
+        <a onclick="_paq.push(['trackEvent', 'Change', 'CangeToEnglish', 'change lenguage to english']);" class="btn bgreen2 mx-2" th:href="@{?lang=en}" th:text="#{lang.en}"></a>
+        <a onclick="_paq.push(['trackEvent', 'Change', 'ChangeToSpanish', 'change lenguage to spanish']);" class="btn bgreen2 mx-2" th:href="@{?lang=es}" th:text="#{lang.es}"></a>
+      </div>
+      <li class="mb-3">
+        <hr class="dropdown-divider">
+      </li>
+      <li class="d-flex align-items-center justify-content-center">
+        <a onclick="_paq.push(['trackEvent', 'Redirect', 'LogoOut', 'log out']);" class="btn w-75 bgreen2" id="out" th:href="@{/logout}" th:text="#{logout}"></a>
+      </li>
+    </ul>
+  </div>

@@ -15,6 +15,11 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
     private JwtTokenProvider jwtTokenProvider;
 
+    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
     @Override
     public String login(LoginDto loginDto) {
 

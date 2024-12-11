@@ -1,0 +1,85 @@
+:root {
+	--verde: #76BA99;
+	--pistacho: #CED89E;
+	--card: #ADCF9F;
+	--crema: #FFDCAE;
+	--plus: #49be25;
+	--minus: #e93131;
+
+	font-family: "Lucida Console";
+}
+
+.bcream {
+	background-color: var(--crema)
+}
+
+.bgreen1 {
+	background-color: var(--verde)
+}
+
+.bgreen2 {
+	background-color: var(--pistacho)
+}
+
+.bgreen3 {
+	background-color: var(--card)
+}
+
+.ccream {
+	color: var(--crema)
+}
+
+.cgreen1 {
+	color: var(--verde)
+}
+
+.cgreen2 {
+	color: var(--pistacho)
+}
+
+.cgreen3 {
+	color: var(--card)
+}
+
+.green {
+	background-color: var(--plus)
+}
+
+.red {
+	background-color: var(--minus)
+}
+
+.negative {
+	margin-bottom: -50px;
+}
+
+.negativel {
+	margin-left: -25px;
+}
+
+.negativer {
+	margin-right: -25px;
+}
+
+.negativexl {
+	margin-left: -50px;
+}
+
+.negativet {
+	margin-top: -40px;
+}
+
+.negativext {
+	margin-top: -80px;
+}
+
+#copyleft {
+	display: inline-block;
+	transform: rotate(180deg);
+}
+
+@supports (grid-template-columns: subgrid) {}
+
+@media (min-width: 512px) {}
+
+@media (min-width: 900px) {}

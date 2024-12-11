@@ -1,12 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang=es layout:decorate="~{layout/login_layout}">
+
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
     <!-- Link to the external JS file -->
-    <script src="login.js"></script>
+    <!--<script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginForm = document.getElementById("loginForm");
+            const errorMessage = document.getElementById("error-message");
+
+            loginForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(loginForm);
+                const username = formData.get("username");
+                const password = formData.get("password");
+
+                const data = {
+                    username,
+                    password,
+                };
+
+                fetch("/api/auth/loginform", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Invalid username or password.");
+                        }
+                        return response.json();
+                    })
+                    .catch((error) => {
+                        errorMessage.textContent = error.message || "An error occurred during login.";
+                        errorMessage.style.display = "block";
+                    });
+            });
+        });
+    </script>-->
 </head>
-<body>
+
+<!--<body>
     <h2>Please Sign In</h2>
 
     <form id="loginForm" method="post">
@@ -27,5 +66,31 @@
         </div>
     </form>
 
+</body>-->
+
+<body>
+    <main layout:fragment="main">
+        <div class="container vw-100">
+            <div class="row w-100 justify-content-center">
+                <div class="col-10 col-sm-8 col-md-6 col-lg-4 bgreen3 rounded border border-dark mt-5">
+                    <form class="p-0" th:action="@{/api/auth/loginform}" method="post">
+                        <label class="form-label col-3 mb-4 mt-5" th:text="#{user.username}"></label>
+                        <input th:type="text" name="username" placeholder="myname"
+                            class="col-6 bcream rounded-pill border border-dark">
+                        <label class="form-label col-3 mt-4" th:text="#{user.password}"></label>
+                        <input th:type="password" name="password" placeholder="mypassword"
+                            class="col-6 bcream rounded-pill border border-dark mb-3">
+                        <button onclick="_paq.push(['trackEvent', 'Click', 'Login', 'click on Login ']);" type="submit"
+                            class="shadow-sm btn bgreen1 col-3 border border-dark mb-3"
+                            th:text="#{button.login}"></button>
+                    </form>
+                </div>
+                <div class="row align-items-center justify-content-center d-inline">
+                    <p th:text="#{message.no-account}"></p><a th:href="@{/create}" th:text="#{message.click-here}"></a>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
+
 </html>
