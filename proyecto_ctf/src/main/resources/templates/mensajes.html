@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Imágenes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ecf0f1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 0.5rem 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #3498db;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .image-preview {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Galería de Imágenes</h1>
+        <ul id="image-list">
+            <!-- Aquí se cargará la lista de imágenes dinámicamente -->
+        </ul>
+        <div class="image-preview" id="image-preview">
+            <!-- Aquí se mostrará la imagen seleccionada -->
+        </div>
+    </div>
+
+    <script>
+        // Función para cargar las imágenes desde el servidor
+        async function loadImages() {
+            const imageListElement = document.getElementById('image-list');
+
+            try {
+                // Llamada al endpoint para obtener la lista de imágenes
+                const response = await fetch('/api/dashboard/images');
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar la lista de imágenes.');
+                }
+
+                const images = await response.json();
+
+                // Mostrar la lista de imágenes como enlaces
+                images.forEach(image => {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/api/dashboard/execute/${image}`; // Ruta de acceso a la imagen
+                    link.textContent = image;
+                    link.target = '_blank'; // Abre en una nueva pestaña
+
+                    listItem.appendChild(link);
+                    imageListElement.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error al cargar las imágenes:', error);
+                imageListElement.textContent = 'No se pudieron cargar las imágenes.';
+            }
+        }
+
+        // Cargar las imágenes al cargar la página
+        loadImages();
+    </script>
+</body>
+
+</html>
