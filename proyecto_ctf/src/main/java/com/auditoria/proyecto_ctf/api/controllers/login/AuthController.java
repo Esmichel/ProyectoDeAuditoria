@@ -1,5 +1,7 @@
 package com.auditoria.proyecto_ctf.api.controllers.login;
 
+import java.net.URI;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -21,35 +23,39 @@ public class AuthController {
     }
 
     // Build Login REST API
-    /*@PostMapping("/loginform")
-    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto) {
-        String token = authService.login(loginDto);
-
-        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-        jwtAuthResponse.setAccessToken(token);
-
-        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
-    }*/
+    /*
+     * @PostMapping("/loginform")
+     * public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto)
+     * {
+     * String token = authService.login(loginDto);
+     * 
+     * JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+     * jwtAuthResponse.setAccessToken(token);
+     * 
+     * return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+     * }
+     */
 
     @PostMapping("/loginform")
-    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto) {
-        String token = authService.login(loginDto);
+    public ResponseEntity<JwtAuthResponse> login(@RequestParam String username, @RequestParam String password/*@RequestBody LoginDto loginDto*/) {
+        String token = authService.login(username, password/*loginDto*/);
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setAccessToken(token);
 
-        // Create an HttpOnly cookie
         ResponseCookie cookie = ResponseCookie.from("jwt_token", token)
                 .httpOnly(true)
-                .secure(true) // Set to true if using HTTPS
-                .path("/") // Set the cookie path
-                .maxAge(60 * 60 * 24 * 7) // Set the cookie expiration time (7 days)
+                .secure(true) // Ensure this is set to true if you're using HTTPS
+                .path("/") // Path for which the cookie is valid
+                .maxAge(60 * 60 * 24 * 7) // Cookie expiration (7 days)
+                .sameSite("None") // Allow cookies to be sent in cross-origin requests
                 .build();
 
         // Add the cookie to the response
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(jwtAuthResponse);
+        return ResponseEntity.status(HttpStatus.FOUND) // 302 redirect
+                .header(HttpHeaders.SET_COOKIE, cookie.toString()) // Attach the cookie
+                .header(HttpHeaders.LOCATION, "/dashboard")  // Redirect URL
+                .build();
     }
 
 }

@@ -40,6 +40,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Allow static resources (CSS, JS, images) to pass
+        if (request.getRequestURI().startsWith("/css") ||
+                request.getRequestURI().startsWith("/js") ||
+                request.getRequestURI().startsWith("/img") ||
+                request.getRequestURI().endsWith(".ico") ||
+                request.getRequestURI().endsWith(".css") ||
+                request.getRequestURI().endsWith(".js") ||
+                request.getRequestURI().endsWith(".png") ||
+                request.getRequestURI().endsWith(".jpg") ||
+                request.getRequestURI().endsWith(".jpeg") ||
+                request.getRequestURI().endsWith(".gif") ||
+                request.getRequestURI().endsWith(".svg")) {
+            filterChain.doFilter(request, response); // Skip authentication for static resources
+            return;
+        }
+
         // Get JWT token from HTTP request
         String token = getTokenFromRequest(request);
 
@@ -63,15 +79,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    /*private String getTokenFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7, bearerToken.length());
-        }
-
-        return null;
-    }*/
+    /*
+     * private String getTokenFromRequest(HttpServletRequest request) {
+     * String bearerToken = request.getHeader("Authorization");
+     * 
+     * if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+     * return bearerToken.substring(7, bearerToken.length());
+     * }
+     * 
+     * return null;
+     * }
+     */
 
     public String getTokenFromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();

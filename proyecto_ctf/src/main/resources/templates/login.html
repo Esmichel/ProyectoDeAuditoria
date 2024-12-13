@@ -29,17 +29,20 @@
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(data),
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error("Invalid username or password.");
-                        }
-                        return response.json();
-                    })
-                    .catch((error) => {
-                        errorMessage.textContent = error.message || "An error occurred during login.";
-                        errorMessage.style.display = "block";
-                    });
+                    credentials: "include",  // Make sure to send cookies
+                    redirect: "follow",  // Follow redirects automatically
+                }).then((response) => {
+                    if (response.ok) {
+                        // The backend will automatically handle the redirection to /dashboard
+                        // No need to manually handle the redirect
+                        // The browser will navigate to the location set in the backend (e.g., /dashboard)
+                    } else {
+                        throw new Error("Invalid username or password.");
+                    }
+                }).catch((error) => {
+                    errorMessage.textContent = error.message || "An error occurred during login.";
+                    errorMessage.style.display = "block";
+                });
             });
         });
     </script>-->
@@ -73,15 +76,14 @@
         <div class="container vw-100">
             <div class="row w-100 justify-content-center">
                 <div class="col-10 col-sm-8 col-md-6 col-lg-4 bgreen3 rounded border border-dark mt-5">
-                    <form class="p-0" th:action="@{/api/auth/loginform}" method="post">
+                    <form id="loginForm" class="p-0" th:action="@{/api/auth/loginform}" method="post">
                         <label class="form-label col-3 mb-4 mt-5" th:text="#{user.username}"></label>
                         <input th:type="text" name="username" placeholder="myname"
                             class="col-6 bcream rounded-pill border border-dark">
                         <label class="form-label col-3 mt-4" th:text="#{user.password}"></label>
                         <input th:type="password" name="password" placeholder="mypassword"
                             class="col-6 bcream rounded-pill border border-dark mb-3">
-                        <button onclick="_paq.push(['trackEvent', 'Click', 'Login', 'click on Login ']);" type="submit"
-                            class="shadow-sm btn bgreen1 col-3 border border-dark mb-3"
+                        <button type="submit" class="shadow-sm btn bgreen1 col-3 border border-dark mb-3"
                             th:text="#{button.login}"></button>
                     </form>
                 </div>

@@ -1,5 +1,6 @@
 package com.auditoria.proyecto_ctf.api.controllers;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,12 +13,12 @@ public class LoginController {
 
     @RequestMapping("/")
     public String home(HttpServletRequest request, Model model) {
-        return "redirect:/process";
+        return "redirect:/dashboard";
     }
     
     @RequestMapping("/login")
     public String login(HttpServletRequest request) {
-        if (request.getUserPrincipal()!=null) {
+        if (SecurityContextHolder.getContext().getAuthentication()!=null) {
             return "redirect:/";
         }
         return "login";

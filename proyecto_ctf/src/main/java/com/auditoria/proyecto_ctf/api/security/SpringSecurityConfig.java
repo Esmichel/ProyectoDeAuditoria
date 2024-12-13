@@ -26,7 +26,6 @@ import com.auditoria.proyecto_ctf.application.authentication.JwtAuthenticationFi
 @EnableMethodSecurity
 public class SpringSecurityConfig {
 
-    // private UserDetailsService userDetailsService;
 
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
 
@@ -45,7 +44,6 @@ public class SpringSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http.csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity, can be adjusted if necessary
                 .authorizeHttpRequests((authorize) -> {
                     // Public authentication endpoints
@@ -54,6 +52,8 @@ public class SpringSecurityConfig {
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     // Allow unauthenticated access to the login page
                     authorize.requestMatchers("/login").permitAll();
+                    // Allow unauthenticated access to static resources (CSS, JS, images, etc.)
+                    authorize.requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll();
                     // All other requests require authentication
                     authorize.anyRequest().authenticated();
                 })
