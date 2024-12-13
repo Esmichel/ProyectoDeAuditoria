@@ -27,4 +27,9 @@ public class LoginController {
     public String dashboard(HttpServletRequest request) {
         return "dashboard";
     }
+
+    @RequestMapping("/perfil")
+    public String perfil(HttpServletRequest request) {
+        return "perfil";
+    }
 }

@@ -1,96 +1,141 @@
 <!DOCTYPE html>
-<html lang=es layout:decorate="~{layout/login_layout}">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <!-- Link to the external JS file -->
-    <!--<script>
+    <style>
+        body {
+            background-color: #3cb371; /* Verde claro */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const loginForm = document.getElementById("loginForm");
-            const errorMessage = document.getElementById("error-message");
+        .login-container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
 
-            loginForm.addEventListener("submit", function (event) {
-                event.preventDefault();
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #333;
+        }
 
-                const formData = new FormData(loginForm);
-                const username = formData.get("username");
-                const password = formData.get("password");
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #555;
+        }
 
-                const data = {
-                    username,
-                    password,
-                };
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-                fetch("/api/auth/loginform", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data),
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error("Invalid username or password.");
-                        }
-                        return response.json();
-                    })
-                    .catch((error) => {
-                        errorMessage.textContent = error.message || "An error occurred during login.";
-                        errorMessage.style.display = "block";
-                    });
+        .btn-login {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .btn-login:hover {
+            background-color: #218838;
+        }
+
+        .text-center {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .text-center a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 1rem;
+            text-align: center;
+            width: 100%;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Grüner Hügel</h2>
+        <form id="loginForm">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required>
+
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+
+            <button type="submit" class="btn-login">Login</button>
+        </form>
+        <div class="text-center">
+            <p>Don't have an account? <a href="/create">Click here</a></p>
+        </div>
+    </div>
+    <footer>&copy;2023 Grüner Hügel</footer>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            fetch("/api/auth/loginform", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Login failed. Please check your credentials.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Guarda el token en localStorage
+                console.log("Token: ",data);
+                
+                localStorage.setItem("authToken", data.accessToken);
+
+                // Redirige al dashboard u otra página protegida
+                window.location.href = "/dashboard";
+            })
+            .catch(error => {
+                alert(error.message);
             });
         });
-    </script>-->
-</head>
-
-<!--<body>
-    <h2>Please Sign In</h2>
-
-    <form id="loginForm" method="post">
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div>
-            <button type="submit">Login</button>
-        </div>
-
-        <div id="error-message" style="color:red; display:none;">
-            <p>Invalid username or password.</p>
-        </div>
-    </form>
-
-</body>-->
-
-<body>
-    <main layout:fragment="main">
-        <div class="container vw-100">
-            <div class="row w-100 justify-content-center">
-                <div class="col-10 col-sm-8 col-md-6 col-lg-4 bgreen3 rounded border border-dark mt-5">
-                    <form class="p-0" th:action="@{/api/auth/loginform}" method="post">
-                        <label class="form-label col-3 mb-4 mt-5" th:text="#{user.username}"></label>
-                        <input th:type="text" name="username" placeholder="myname"
-                            class="col-6 bcream rounded-pill border border-dark">
-                        <label class="form-label col-3 mt-4" th:text="#{user.password}"></label>
-                        <input th:type="password" name="password" placeholder="mypassword"
-                            class="col-6 bcream rounded-pill border border-dark mb-3">
-                        <button onclick="_paq.push(['trackEvent', 'Click', 'Login', 'click on Login ']);" type="submit"
-                            class="shadow-sm btn bgreen1 col-3 border border-dark mb-3"
-                            th:text="#{button.login}"></button>
-                    </form>
-                </div>
-                <div class="row align-items-center justify-content-center d-inline">
-                    <p th:text="#{message.no-account}"></p><a th:href="@{/create}" th:text="#{message.click-here}"></a>
-                </div>
-            </div>
-        </div>
-    </main>
+    </script>
 </body>
-
 </html>
