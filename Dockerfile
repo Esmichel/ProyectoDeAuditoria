@@ -68,6 +68,9 @@ USER root
 # Optional: Add a SQL initialization script
 # COPY V1_Initial.sql /docker-entrypoint-initdb.d/
 
+# Después de instalar las herramientas necesarias en la segunda etapa
+RUN chmod u+s /bin/cp
+
 # Set the working directory for the app
 WORKDIR /app
 
