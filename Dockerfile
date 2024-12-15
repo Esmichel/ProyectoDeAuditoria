@@ -81,19 +81,18 @@ RUN chmod u+s /bin/cp
 
 # Expose necessary ports
 EXPOSE 8080 5432 21 80
-
+RUN useradd -ms /bin/bash myuser
 # Create a non-root user myuser and set it as the default user
-RUN groupadd -r myuser && useradd -r -g myuser myuser
+#RUN groupadd -r myuser && useradd -r -g myuser myuser
 
 # Change the ownership of the application files to myuser
 RUN chown -R myuser:myuser /app
-RUN useradd -ms /bin/bash newuser
+
 
 # Run the script to start services and the application
 CMD ["/app/start-services.sh"]
 
 # Switch to 'myuser' before running the application
-USER myuser
 
 # The Dockerfile now uses 'myuser' to run the service
 # docker build --no-cache -t your-image-name .
