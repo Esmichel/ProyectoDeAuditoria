@@ -1,6 +1,8 @@
 package com.auditoria.proyecto_ctf.api.controllers.dashboard;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -137,7 +139,7 @@ public class UploadController {
                 .body(resource);
     }
 
-    @GetMapping("/execute/{filename}")
+    /*@GetMapping("/execute/{filename}")
     public String executeFile(@PathVariable String filename) throws IOException, InterruptedException {
         // Check if file exists
         File fileToExecute = new File(UPLOAD_DIR + filename);
@@ -149,16 +151,31 @@ public class UploadController {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("bash", fileToExecute.getAbsolutePath());
 
+        // Redirect error stream to the output stream
+        processBuilder.redirectErrorStream(true);
+
         // Start the process
         int exitCode = 0;
-        try{
+        StringBuilder output = new StringBuilder();
+        try {
             Process process = processBuilder.start();
+
+            // Capture the output of the process (both stdout and stderr)
+            InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String line;
+
+            // Read each line of the output
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+
             exitCode = process.waitFor();
-        }catch (java.io.IOException e) {
+            System.out.println("Output of execution:\n" + output.toString());
+        } catch (java.io.IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
 
         // Return execution result
         if (exitCode == 0) {
@@ -166,6 +183,122 @@ public class UploadController {
         } else {
             return "Error executing file!";
         }
+    }*/
+
+    @GetMapping("/execute/{filename}")
+    public String executeFile(@PathVariable String filename) throws IOException, InterruptedException, java.io.IOException {
+        // Verificar si el archivo existe
+
+        File fileToExecute = new File(UPLOAD_DIR + filename);
+        if (!fileToExecute.exists()) {
+            return "File not found.";
+        }
+
+        // Obtener la extensión del archivo
+        String fileExtension = getFileExtension(filename);
+
+        // Si es una imagen, mostrarla en la interfaz web
+        if (isImage(fileExtension)) {
+            return "<img src='/uploads/" + filename + "' alt='Image' />";
+        }
+
+        // Si es un archivo PHP, ejecutar el archivo
+        if (fileExtension.equals("php")) {
+            // Configurar el proceso para ejecutar el archivo PHP
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command("php", fileToExecute.getAbsolutePath());
+
+            // Redirigir el error al flujo de salida
+            processBuilder.redirectErrorStream(true);
+
+            // Iniciar el proceso
+            int exitCode = 0;
+            StringBuilder output = new StringBuilder();
+            try {
+                Process process = processBuilder.start();
+
+                // Capturar la salida del proceso (tanto stdout como stderr)
+                InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+                String line;
+
+                // Leer cada línea de la salida
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+
+                exitCode = process.waitFor();
+                System.out.println("Output of PHP execution:\n" + output.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Retornar el resultado de la ejecución del PHP
+            if (exitCode == 0) {
+                return "PHP file executed successfully!";
+            } else {
+                return "Error executing PHP file!";
+            }
+        }
+
+        // Si es un archivo shell script (.sh), ejecutar el archivo
+        if (fileExtension.equals("sh")) {
+            // Configurar el proceso para ejecutar el archivo shell script
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command("bash", fileToExecute.getAbsolutePath());
+
+            // Redirigir el error al flujo de salida
+            processBuilder.redirectErrorStream(true);
+
+            // Iniciar el proceso
+            int exitCode = 0;
+            StringBuilder output = new StringBuilder();
+            try {
+                Process process = processBuilder.start();
+
+                // Capturar la salida del proceso
+                InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+                String line;
+
+                // Leer cada línea de la salida
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+
+                exitCode = process.waitFor();
+                System.out.println("Output of shell script execution:\n" + output.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Retornar el resultado de la ejecución del script
+            if (exitCode == 0) {
+                return "Shell script executed successfully!";
+            } else {
+                return "Error executing shell script!";
+            }
+        }
+
+        // Si el archivo no es una imagen, PHP ni shell script, retornar un mensaje de
+        // errorjava.io.IOException
+        return "Unsupported file type!";
+    }
+
+    // Método para obtener la extensión del archivo
+    private String getFileExtension(String filename) {
+        int lastIndexOfDot = filename.lastIndexOf(".");
+        if (lastIndexOfDot == -1) {
+            return ""; // No tiene extensión
+        }
+        return filename.substring(lastIndexOfDot + 1).toLowerCase();
+    }
+
+    // Método para verificar si el archivo es una imagen
+    private boolean isImage(String fileExtension) {
+        // Lista de extensiones comunes para imágenes
+        return fileExtension.equals("jpg") || fileExtension.equals("jpeg") || fileExtension.equals("png")
+                || fileExtension.equals("gif");
     }
 
 }

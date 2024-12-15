@@ -1,14 +1,156 @@
 <!DOCTYPE html>
-<html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #ecf0f1;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: #ecf0f1;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #bdc3c7;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .navbar button {
+            padding: 0.5rem 1rem;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .navbar button:hover {
+            background-color: #c0392b;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background-color: #ecf0f1;
+            overflow-y: auto;
+        }
+
+        .section {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            margin: 0 0 1rem;
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+
+        .section p {
+            margin: 0;
+            color: #7f8c8d;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Dashboard</h1>
-    <form action="/command" method="POST">
-        <label for="cmd">Command:</label>
-        <input type="text" id="cmd" name="cmd" required><br><br>
-        <button type="submit">Run Command</button>
-    </form>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <a th:href="@{/dashboard}">Inicio</a>
+        <a th:href="@{/perfil}">Perfil</a>
+        <a th:href="@{/configuracion}">Configuración</a>
+        <a th:href="@{/mensajes}">Mensajes</a>
+        <a th:href="@{/notificaciones}">Notificaciones</a>
+        <a th:href="@{/estadisticas}">Estadísticas</a>
+        <a th:href="@{/soporte}">Soporte</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navbar -->
+        <div class="navbar">
+            <h1>Bienvenido</h1>
+            <button onclick="logout()">Cerrar sesión</button>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Section 1 -->
+            <div class="section">
+                <h2>Resumen</h2>
+                <p>Esta es una visión general de tu cuenta y actividad reciente.</p>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="section">
+                <h2>Actividades recientes</h2>
+                <p>No hay actividad reciente.</p>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="section">
+                <h2>Configuración rápida</h2>
+                <p>Añade, modifica o elimina configuraciones rápidamente desde aquí.</p>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="section">
+                <h2>Estadísticas</h2>
+                <p>Revisa tus métricas más recientes.</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
