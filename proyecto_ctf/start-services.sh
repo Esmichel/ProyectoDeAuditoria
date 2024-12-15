@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Set Java environment variables
+export JAVA_HOME=/usr/lib/jvm/java-18-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+
 # Start PostgreSQL
 service postgresql start
 
