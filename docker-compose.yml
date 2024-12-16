@@ -5,77 +5,15 @@ services:
     container_name: springboot-app
     ports:
       - "8080:8080" # Puerto para la aplicación
-      - "80:80" # Puerto para Apache
       - "21:21" # Puerto para FTP
       - "5432:5432" #Puerto para PostgreSQL
       - "10000-10100:10000-10100"
-
     networks:
       - app-network
     environment:
       # Configuración de memoria JVM para la aplicación
       - JAVA_OPTS=-Xms512m -Xmx1024m
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://127.0.0.1:5432/proyecto_auditoria
-      - SPRING_DATASOURCE_USERNAME=user_auditoria
-      - SPRING_DATASOURCE_PASSWORD=password
-      - APP_JWT_SECRET=secretauditori
-      - APP_JWT_EXPIRATION_MILLISECONDS=7200000
-    volumes:
-      - ./flags:/flags # Montar la carpeta de flags
-      #- ./V1_Initial.sql:/docker-entrypoint-initdb.d/V1_Initial.sql # Montar el script SQL para inicialización
-      - ./ftp:/home/vsftpd # Carpeta para FTP
     restart: unless-stopped
-
-    # # Servicio para la base de datos MySQL
-    # mysql-db:
-    #   image: mysql:8.0
-    #   container_name: mysql-db
-    #   ports:
-    #     - "3306:3306"  # Puerto para acceso a la base de datos
-    #   environment:
-    #     MYSQL_ROOT_PASSWORD: rootpassword
-    #     MYSQL_DATABASE: proyecto_auditoria
-    #     MYSQL_USER: user
-    #     MYSQL_PASSWORD: userpassword
-    #   volumes:
-    #     - db_data:/var/lib/mysql  # Persistencia de datos
-    #   networks:
-    #     - app-network
-    #   restart: unless-stopped
-
-
-    # # PostgreSQL service
-    # postgres-db:
-    #   image: postgres:14
-    #   container_name: postgres-db
-    #   ports:
-    #     - "5432:5432" # Port for PostgreSQL
-    #   environment:
-    #     POSTGRES_USER: user
-    #     POSTGRES_PASSWORD: password
-    #     POSTGRES_DB: proyecto_auditoria
-    #   volumes:
-    #     - postgres_data:/var/lib/postgresql/data
-    #   networks:
-    #     - app-network
-    #   restart: unless-stopped
-
-  # # Servicio FTP
-  # ftp-server:
-  #   image: fauria/vsftpd
-  #   container_name: ftp-server
-  #   ports:
-  #     - "20:20" # Puerto de datos FTP
-  #     - "21:21" # Puerto FTP principal
-  #   volumes:
-  #     - ./ftp:/home/vsftpd # Carpeta para FTP
-  #   environment:
-  #     # Configuración básica para el servidor FTP
-  #     - FTP_USER=user1
-  #     - FTP_PASS=ftp_password
-  #   networks:
-  #     - app-network
-  #   restart: unless-stopped
 
 volumes:
   postgres_data: {} # Volumen persistente para MySQL

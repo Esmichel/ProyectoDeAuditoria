@@ -42,6 +42,9 @@ RUN echo "listen_addresses='*'" >> /etc/postgresql/13/main/postgresql.conf
 RUN echo "host    proyecto_auditoria    user_auditoria    0.0.0.0/0    md5" >> /etc/postgresql/13/main/pg_hba.conf 
 
 # Configurar vsftpd para acceso anónimo
+# Use the official vsftpd image
+
+# Configure vsftpd for anonymous access
 RUN echo "anonymous_enable=YES" >> /etc/vsftpd.conf && \
     echo "local_enable=NO" >> /etc/vsftpd.conf && \
     echo "write_enable=NO" >> /etc/vsftpd.conf && \
@@ -51,11 +54,15 @@ RUN echo "anonymous_enable=YES" >> /etc/vsftpd.conf && \
     echo "pasv_enable=YES" >> /etc/vsftpd.conf && \
     echo "pasv_min_port=10000" >> /etc/vsftpd.conf && \
     echo "pasv_max_port=10100" >> /etc/vsftpd.conf && \
+    # Create the anonymous directory and set permissions
     mkdir -p /home/vsftpd/anon && \
     echo "Archivo de prueba" > /home/vsftpd/anon/test.txt && \
     chmod -R 755 /home/vsftpd/anon && \
     chmod 644 /home/vsftpd/anon/test.txt && \
-    chown -R ftp:ftp /home/vsftpd/anon
+    chown -R nobody:nogroup /home/vsftpd/anon
+
+# Expose the FTP port (21) and passive ports (10000-10100)
+EXPOSE 21 10000-10100
 
 # Initialize PostgreSQL
 USER postgres
@@ -77,16 +84,16 @@ COPY --from=builder /app/ProyectoDeAuditoria/proyecto_ctf/start-services.sh /app
 
 # Make the JAR file and the script executable
 RUN chmod +x /app/app.jar /app/start-services.sh
-RUN chmod u+s /bin/cp
 
 # Expose necessary ports
 EXPOSE 8080 5432 21 80
 RUN useradd -ms /bin/bash myuser
 # Create a non-root user myuser and set it as the default user
 #RUN groupadd -r myuser && useradd -r -g myuser myuser
-
+#ENV JAVA_HOME=/usr/local/openjdk-18
+#ENV PATH=$JAVA_HOME/bin:$PATH
 # Change the ownership of the application files to myuser
-RUN chown -R myuser:myuser /app
+#RUN chown -R myuser:myuser /app
 
 
 # Run the script to start services and the application
