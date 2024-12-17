@@ -9,5 +9,7 @@ service postgresql start
 # Start FTP service
 service vsftpd start
 
+su myuser
+
 # Run the Spring Boot application as myuser
-su - myuser -c "java -jar /app/app.jar"
+java -jar /app/app.jar
