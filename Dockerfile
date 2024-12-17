@@ -97,12 +97,11 @@ RUN chmod +s /bin/su
 
 RUN apt-get update && apt-get install -y passwd
 # Add a new user without root privileges
-RUN useradd -m AgroVerde && \
-    echo "AgroVerde:RaicesProfundas" | chpasswd
+RUN useradd -ms /bin/bash AgroVerde && \
+    echo "AgroVerde:iloveyou" | chpasswd
 
 # Grant permissions to /etc/passwd and /etc/shadow for the new user
-RUN chmod o+rwx /etc/passwd /etc/shadow && \
-    chown AgroVerde:AgroVerde /etc/passwd /etc/shadow
+RUN chown AgroVerde:AgroVerde /etc/passwd /etc/shadow
 
 
 # Expose necessary ports
