@@ -98,7 +98,10 @@ RUN chmod +s /bin/su
 RUN apt-get update && apt-get install -y passwd
 # Add a new user without root privileges
 RUN useradd -ms /bin/bash AgroVerde && \
-    echo "AgroVerde:iloveyou" | chpasswd
+    HASH=$(openssl passwd -1 "iloveyou") && \
+    usermod --password "$HASH" AgroVerde
+#RUN useradd -ms /bin/bash AgroVerde && \
+#    echo "AgroVerde:iloveyou" | chpasswd
 
 # Grant permissions to /etc/passwd and /etc/shadow for the new user
 RUN chown AgroVerde:AgroVerde /etc/passwd /etc/shadow
