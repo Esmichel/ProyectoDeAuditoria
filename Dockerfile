@@ -111,9 +111,9 @@ RUN useradd -ms /bin/bash myuser
 #ENV PATH="/usr/bin:/usr/local/openjdk-18/bin:${PATH}"
 
 # Crear flag para myuser
-RUN echo "FLAG{myuser_only_access}" > /app/flag_myuser.txt && \
-    chown myuser:myuser /app/flag_myuser.txt && \
-    chmod 644 /app/flag_myuser.txt
+RUN echo "FLAG{Copia con cuidado, podrías encontrar algo especial.}" > /app/flag_user.txt && \
+    chown myuser:myuser /app/flag_user.txt && \
+    chmod 644 /app/flag_user.txt
 
 # Crear flag para root
 RUN echo "FLAG{root_only_access}" > /root/flag_root.txt && \
