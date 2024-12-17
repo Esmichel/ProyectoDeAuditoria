@@ -54,6 +54,8 @@ public class SpringSecurityConfig {
                     authorize.requestMatchers("/login").permitAll();
                     // Allow unauthenticated access to static resources (CSS, JS, images, etc.)
                     authorize.requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll();
+                    // Allow unauthenticated access to custom folder (e.g., uploaded images)
+                    authorize.requestMatchers("/uploadedImages/**").permitAll();  // Modify this line to match your custom path
                     // All other requests require authentication
                     authorize.anyRequest().authenticated();
                 })

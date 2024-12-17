@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galería de Imágenes</title>
+    <title>Galería de Archivos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,25 +36,38 @@
             margin: 0.5rem 0;
         }
 
-        a {
-            text-decoration: none;
-            color: #3498db;
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 5px;
         }
 
-        a:hover {
-            text-decoration: underline;
+        button:hover {
+            background-color: #2980b9;
         }
 
-        .image-preview {
+        .file-preview {
             text-align: center;
             margin-top: 2rem;
         }
 
-        .image-preview img {
+        .file-preview img {
             max-width: 100%;
             height: auto;
             border: 1px solid #ccc;
             border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-preview pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #f4f4f4;
+            padding: 1rem;
+            border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
     </style>
@@ -62,48 +75,77 @@
 
 <body>
     <div class="container">
-        <h1>Galería de Imágenes</h1>
-        <ul id="image-list">
-            <!-- Aquí se cargará la lista de imágenes dinámicamente -->
+        <h1>Galería de Archivos</h1>
+
+        <!-- Dynamically load the list of files -->
+        <ul id="file-list">
+            <!-- Files will be listed here -->
         </ul>
-        <div class="image-preview" id="image-preview">
-            <!-- Aquí se mostrará la imagen seleccionada -->
+
+        <div class="file-preview" id="file-preview">
+            <!-- This area will display the file content or image -->
         </div>
     </div>
 
     <script>
-        // Función para cargar las imágenes desde el servidor
-        async function loadImages() {
-            const imageListElement = document.getElementById('image-list');
-
+        // Function to load the list of files from the server
+        async function loadFiles() {
+            const fileListElement = document.getElementById('file-list');
             try {
-                // Llamada al endpoint para obtener la lista de imágenes
+                // Call the API to fetch the list of files
                 const response = await fetch('/api/dashboard/images');
                 if (!response.ok) {
-                    throw new Error('No se pudo cargar la lista de imágenes.');
+                    throw new Error('Could not load file list.');
                 }
 
-                const images = await response.json();
+                const files = await response.json();
 
-                // Mostrar la lista de imágenes como enlaces
-                images.forEach(image => {
+                // Clear the list before populating it
+                fileListElement.innerHTML = '';
+
+                // Iterate over the files and create buttons for each file
+                files.forEach(file => {
                     const listItem = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = `/api/dashboard/execute/${image}`; // Ruta de acceso a la imagen
-                    link.textContent = image;
-                    link.target = '_blank'; // Abre en una nueva pestaña
+                    const button = document.createElement('button');
+                    button.textContent = file;
 
-                    listItem.appendChild(link);
-                    imageListElement.appendChild(listItem);
+                    // When clicked, execute the image file or show it
+                    button.addEventListener('click', () => showFile(file));
+
+                    listItem.appendChild(button);
+                    fileListElement.appendChild(listItem);
                 });
             } catch (error) {
-                console.error('Error al cargar las imágenes:', error);
-                imageListElement.textContent = 'No se pudieron cargar las imágenes.';
+                console.error('Error loading files:', error);
+            }
+        }
+        
+        // Function to display the file (either as an image or execution result)
+        async function showFile(filename) {
+            const filePreview = document.getElementById('file-preview');
+            filePreview.innerHTML = ''; // Clear previous preview
+
+            try {
+                // Call the execute endpoint to either show or execute the file
+                const response = await fetch(`/api/dashboard/execute?filename=${filename}`);
+
+                if (!response.ok) {
+                    throw new Error('Failed to execute or show file.');
+                }
+
+                const responseText = await response.text();
+
+                // Directly insert the response text (which can be HTML)
+                filePreview.innerHTML = responseText;
+
+            } catch (error) {
+                console.error('Error displaying file:', error);
             }
         }
 
-        // Cargar las imágenes al cargar la página
-        loadImages();
+
+        // Load files when the page loads
+        window.onload = loadFiles;
     </script>
 </body>
 

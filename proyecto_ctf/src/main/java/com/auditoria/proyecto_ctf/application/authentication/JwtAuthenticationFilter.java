@@ -44,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (request.getRequestURI().startsWith("/css") ||
                 request.getRequestURI().startsWith("/js") ||
                 request.getRequestURI().startsWith("/img") ||
+                request.getRequestURI().startsWith("/uploadedFiles") ||
                 request.getRequestURI().endsWith(".ico") ||
                 request.getRequestURI().endsWith(".css") ||
                 request.getRequestURI().endsWith(".js") ||

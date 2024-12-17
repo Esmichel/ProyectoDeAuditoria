@@ -139,57 +139,12 @@ public class UploadController {
                 .body(resource);
     }
 
-    /*@GetMapping("/execute/{filename}")
-    public String executeFile(@PathVariable String filename) throws IOException, InterruptedException {
-        // Check if file exists
-        File fileToExecute = new File(UPLOAD_DIR + filename);
-        if (!fileToExecute.exists()) {
-            return "File not found.";
-        }
-
-        // Execute the shell script (be careful!)
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", fileToExecute.getAbsolutePath());
-
-        // Redirect error stream to the output stream
-        processBuilder.redirectErrorStream(true);
-
-        // Start the process
-        int exitCode = 0;
-        StringBuilder output = new StringBuilder();
-        try {
-            Process process = processBuilder.start();
-
-            // Capture the output of the process (both stdout and stderr)
-            InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-            String line;
-
-            // Read each line of the output
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
-
-            exitCode = process.waitFor();
-            System.out.println("Output of execution:\n" + output.toString());
-        } catch (java.io.IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // Return execution result
-        if (exitCode == 0) {
-            return "File executed successfully!";
-        } else {
-            return "Error executing file!";
-        }
-    }*/
-
-    @GetMapping("/execute/{filename}")
-    public String executeFile(@PathVariable String filename) throws IOException, InterruptedException, java.io.IOException {
+    @GetMapping("/execute")
+    public String executeFile(@RequestParam String filename) throws IOException, InterruptedException, java.io.IOException {
         // Verificar si el archivo existe
-
         File fileToExecute = new File(UPLOAD_DIR + filename);
+        String imageUrl = UPLOAD_DIR + filename;
+        
         if (!fileToExecute.exists()) {
             return "File not found.";
         }
@@ -197,9 +152,9 @@ public class UploadController {
         // Obtener la extensión del archivo
         String fileExtension = getFileExtension(filename);
 
-        // Si es una imagen, mostrarla en la interfaz web
+        // Si es una imagen, devolver la imagen para mostrar en la interfaz
         if (isImage(fileExtension)) {
-            return "<img src='/uploads/" + filename + "' alt='Image' />";
+            return "<img src='/uploadedImages/"  + filename + "' alt='Image' />";
         }
 
         // Si es un archivo PHP, ejecutar el archivo
@@ -281,7 +236,7 @@ public class UploadController {
         }
 
         // Si el archivo no es una imagen, PHP ni shell script, retornar un mensaje de
-        // errorjava.io.IOException
+        // error
         return "Unsupported file type!";
     }
 
